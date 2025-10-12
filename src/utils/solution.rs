@@ -1,7 +1,7 @@
 use Solution::*;
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Solution {
     I8(i8),
     I16(i16),
