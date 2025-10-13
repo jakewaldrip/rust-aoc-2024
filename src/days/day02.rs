@@ -9,7 +9,17 @@ fn create_levels_vec(line: &str) -> Vec<i32> {
     levels
 }
 
-fn evaluate_levels_part_1(levels: &[i32]) -> bool {
+fn create_slice_vec(levels: &[i32], exclude: usize) -> Vec<i32> {
+    let slice: Vec<i32> = levels
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| *i != exclude)
+        .map(|(_, v)| *v)
+        .collect();
+    slice
+}
+
+fn evaluate_levels(levels: &[i32]) -> bool {
     let is_ascending = levels[0] < levels[1];
     for (index, level) in levels.iter().enumerate() {
         if index == levels.len() - 1 {
@@ -30,28 +40,14 @@ fn evaluate_levels_part_1(levels: &[i32]) -> bool {
 }
 
 fn deep_evaluate_levels(levels: &[i32]) -> bool {
-    todo!()
-}
-
-pub fn evaluate_levels_part_2(levels: &[i32]) -> bool {
-    let is_ascending = levels[0] < levels[1];
-
-    for (index, level) in levels.iter().enumerate() {
-        if index == levels.len() - 1 {
-            break;
-        }
-
-        let next_element = levels[index + 1];
-        if is_ascending {
-            if *level >= next_element || next_element - *level > 3 {
-                return false;
-            }
-        } else if *level <= next_element || *level - next_element > 3 {
-            return false;
+    for (index, _) in levels.iter().enumerate() {
+        let slice = create_slice_vec(levels, index);
+        if evaluate_levels(&slice) {
+            return true;
         }
     }
 
-    true
+    false
 }
 
 pub fn solve(input: &str) -> SolutionPair {
@@ -59,7 +55,7 @@ pub fn solve(input: &str) -> SolutionPair {
     let mut p1_count = 0;
     for line in input.lines() {
         let levels = create_levels_vec(line);
-        if evaluate_levels_part_1(&levels) {
+        if evaluate_levels(&levels) {
             p1_count += 1
         }
     }
@@ -69,7 +65,7 @@ pub fn solve(input: &str) -> SolutionPair {
     let mut p2_count = 0;
     for line in input.lines() {
         let levels = create_levels_vec(line);
-        if evaluate_levels_part_2(&levels) || deep_evaluate_levels(&levels) {
+        if evaluate_levels(&levels) || deep_evaluate_levels(&levels) {
             p2_count += 1;
         }
     }
