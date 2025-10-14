@@ -1,7 +1,7 @@
 mod days;
 mod utils;
 
-use days::{day01, day02, day03};
+use days::{day01, day02, day03, day04};
 use std::env;
 use std::fs::read_to_string;
 use std::time::Instant;
@@ -52,6 +52,7 @@ fn get_day_solver(day: u8) -> fn(&str) -> SolutionPair {
         1 => day01::solve,
         2 => day02::solve,
         3 => day03::solve,
+        4 => day04::solve,
         _ => unimplemented!(),
     }
 }
