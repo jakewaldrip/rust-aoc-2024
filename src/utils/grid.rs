@@ -65,14 +65,14 @@ impl Grid {
         if col > self.row_size {
             return None;
         }
-        if row_offset > self.data.len() {
+        if row_offset + col >= self.data.len() {
             return None;
         }
 
         Some(&self.data[row_offset + col])
     }
 
-    pub fn as_bytes(&self) -> &[u8] {
+    pub fn _as_bytes(&self) -> &[u8] {
         &self.data
     }
 
@@ -106,7 +106,7 @@ impl Grid {
         };
 
         // Guard against negative
-        if (point.row as isize + dr) < 0 || (point.row as isize + dc) < 0 {
+        if (point.row as isize + dr) < 0 || (point.col as isize + dc) < 0 {
             return None;
         }
 
@@ -151,7 +151,7 @@ mod tests {
 
         // Expected encoding: [len, bytes...]
         let expected = [b'h', b'e', b'l', b'l', b'o'];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -162,7 +162,7 @@ mod tests {
         // "abc" -> [3, a, b, c]
         // "def" -> [3, d, e, f]
         let expected = [b'a', b'b', b'c', b'd', b'e', b'f'];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -172,7 +172,7 @@ mod tests {
 
         // One line (empty), length = 0
         let expected = [];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -184,7 +184,7 @@ mod tests {
         // ""    -> [0]
         // "two" -> [3, t, w, o]
         let expected = [b'o', b'n', b'e', b't', b'w', b'o'];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod tests {
         // "foo" -> [3, f, o, o]
         // "bar" -> [3, b, a, r]
         let expected = [b'f', b'o', b'o', b'b', b'a', b'r'];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -207,7 +207,7 @@ mod tests {
         // "héllo" -> [6, h, é(0xc3,0xa9), l, l, o]
         // "🌍"    -> [4, F0, 9F, 8C, 8D]
         let expected = [b'h', 0xc3, 0xa9, b'l', b'l', b'o', 0xF0, 0x9F, 0x8C, 0x8D];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -219,7 +219,7 @@ mod tests {
             b'X', b'M', b'S', b'M', b'S', b'A', b'A', b'M', b'X', b'S', b'X', b'M', b'A', b'A',
             b'M', b'M',
         ];
-        assert_eq!(grid.as_bytes(), &expected);
+        assert_eq!(grid._as_bytes(), &expected);
     }
 
     #[test]
@@ -362,6 +362,22 @@ mod tests {
                 value: b'C',
             },
             &Directions::Top,
+        );
+
+        assert_eq!(found, None);
+    }
+
+    #[test]
+    fn get_point_in_direction_out_of_bounds_overflow() {
+        let input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\n";
+        let grid = Grid::new(input);
+        let found = grid.get_point_in_direction(
+            &Point {
+                row: 2,
+                col: 8,
+                value: b'C',
+            },
+            &Directions::BottomRight,
         );
 
         assert_eq!(found, None);
