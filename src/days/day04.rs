@@ -70,6 +70,9 @@ impl WordSearch {
     }
 
     fn evaluate_matching_word_p2(&self, point: &Point) -> i32 {
+        // looking for X shape of 2 mas words, forward or backwards
+        // approach: get all points for the x shape, split into 2 words
+        // check if those words are 1. all Some(), and 2. spell mas or sam
         todo!()
     }
 }
