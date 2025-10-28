@@ -73,13 +73,44 @@ impl WordSearch {
         // looking for X shape of 2 mas words, forward or backwards
         // approach: get all points for the x shape, split into 2 words
         // check if those words are 1. all Some(), and 2. spell mas or sam
-        todo!()
+
+        // Always start with A, otherwise we don't have a match
+        if point.value != b'A' {
+            return 0;
+        }
+
+        let (top_left, top_right, bottom_left, bottom_right) = (
+            self.grid
+                .get_point_in_direction(point, &Directions::TopLeft),
+            self.grid
+                .get_point_in_direction(point, &Directions::TopRight),
+            self.grid
+                .get_point_in_direction(point, &Directions::BottomLeft),
+            self.grid
+                .get_point_in_direction(point, &Directions::BottomRight),
+        );
+
+        if let (Some(top_left), Some(top_right), Some(bottom_left), Some(bottom_right)) =
+            (top_left, top_right, bottom_left, bottom_right)
+        {
+            let x1: String = [top_left.value as char, 'A', bottom_right.value as char]
+                .iter()
+                .collect();
+            let x2: String = [bottom_left.value as char, 'A', top_right.value as char]
+                .iter()
+                .collect();
+
+            if (x1 == "MAS" || x1 == "SAM") && (x2 == "MAS" || x2 == "SAM") {
+                return 1;
+            }
+        }
+
+        0
     }
 }
 
 pub fn solve(input: &str) -> SolutionPair {
     let grid = Grid::new(input);
-    println!("{grid}");
     let word_search = WordSearch { grid };
 
     let mut sol1 = 0;

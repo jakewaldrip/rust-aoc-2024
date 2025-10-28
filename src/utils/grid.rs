@@ -62,7 +62,7 @@ impl Grid {
         let row_offset = self.row_size * row;
 
         // Check for out of bounds
-        if col > self.row_size {
+        if col >= self.row_size {
             return None;
         }
         if row_offset + col >= self.data.len() {
@@ -105,14 +105,17 @@ impl Grid {
             Directions::TopLeft => (-1, -1),
         };
 
+        // Use checked_add/sub to avoid negative indices
+        let new_row = (point.row as isize).checked_add(dr)?;
+        let new_col = (point.col as isize).checked_add(dc)?;
+
         // Guard against negative
-        if (point.row as isize + dr) < 0 || (point.col as isize + dc) < 0 {
+        if new_row < 0 || new_col < 0 {
             return None;
         }
 
-        // Compute new position
-        let new_row = (point.row as isize + dr) as usize;
-        let new_col = (point.col as isize + dc) as usize;
+        let new_row = new_row as usize;
+        let new_col = new_col as usize;
 
         // Use get and map the result
         self.get(new_row, new_col).map(|val| Point {
@@ -376,6 +379,23 @@ mod tests {
                 row: 2,
                 col: 8,
                 value: b'C',
+            },
+            &Directions::BottomRight,
+        );
+
+        assert_eq!(found, None);
+    }
+
+    #[test]
+    fn get_point_in_direction_right_side() {
+        let input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX";
+
+        let grid = Grid::new(input);
+        let found = grid.get_point_in_direction(
+            &Point {
+                row: 7,
+                col: 9,
+                value: b'A',
             },
             &Directions::BottomRight,
         );
