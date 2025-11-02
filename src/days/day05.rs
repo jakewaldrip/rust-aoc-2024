@@ -2,6 +2,20 @@ use crate::{Solution, SolutionPair};
 
 ///////////////////////////////////////////////////////////////////////////////
 
+struct Page {
+    pages: Vec<i32>,
+}
+
+impl Page {
+    pub fn new(line: &str) -> Self {
+        let nums: Vec<i32> = line
+            .split(',')
+            .map(|num| num.parse::<i32>().unwrap())
+            .collect();
+        Self { pages: nums }
+    }
+}
+
 pub fn solve(input: &str) -> SolutionPair {
     println!("Input: \n{input}");
     let sol1 = 0;
